@@ -19,6 +19,8 @@ the library also exports a derive macro with the same name.
 When using the macro, you must have an `id` field on your struct with a `String` type. Any other fields are considered
 either attributes or relationships.
 
+All attributes in a struct must implement Serde's `Deserialize` trait.
+
 ### Resource type
 
 By default, the resource type for a struct will be derived from the struct name, converted to snake_case. To override
