@@ -1,5 +1,7 @@
 # JSON-API 1.1 Deserialization
 
+[![Release](https://github.com/DASPRiD/jsonapi-deserialize-rs/actions/workflows/release.yml/badge.svg)](https://github.com/DASPRiD/jsonapi-deserialize-rs/actions/workflows/release.yml)
+
 A simple library to facilitate deserialization of [JSON-API](https://jsonapi.org/) responses into structs. In contrast
 to existing libraries this one specifically focuses on consumption of payloads, rather than generation. The reasons for
 this are manifold, but primarily is there a large contrast between consumption and generation.
