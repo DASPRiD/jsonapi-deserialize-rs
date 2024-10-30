@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.0.2...v1.1.0) (2024-10-30)
+
+
+### Features
+
+* **derive:** add resource type validation ([098ee4f](https://github.com/DASPRiD/jsonapi-deserialize-rs/commit/098ee4f8257ad6f67f0891010530115fcf901bce))
+* **derive:** add struct-wide and field specific renaming ([07c425b](https://github.com/DASPRiD/jsonapi-deserialize-rs/commit/07c425b2ca6c8438f2a94ebf4e45d9e8e3365d67))
+
 ## [1.0.2](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.0.1...v1.0.2) (2024-10-30)
 
 
