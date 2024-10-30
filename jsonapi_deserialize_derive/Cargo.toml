@@ -1,0 +1,19 @@
+[package]
+name = "jsonapi_deserialize_derive"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ben Scholzen 'DASPRiD' <mail@dasprids.de>"]
+description = "Macro implemention of #[derive(JsonApiDeserialize)]"
+license = "BSD-2-Clause"
+repository = "https://github.com/dasprid/jsonapi-deserialize-rs"
+
+[lib]
+name = "jsonapi_deserialize_derive"
+proc-macro = true
+
+[dependencies]
+darling = "0.20.10"
+heck = "0.5.0"
+proc-macro2 = { version = "1.0.89", default-features = false }
+quote = { version = "1.0.37", default-features = false }
+syn = { version = "2.0.85", default-features = false }

@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = [
+    "jsonapi_deserialize",
+    "jsonapi_deserialize_derive",
+    "test_suite",
+]

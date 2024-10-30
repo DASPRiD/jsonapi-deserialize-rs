@@ -1,0 +1,17 @@
+[package]
+name = "jsonapi_deserialize"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ben Scholzen 'DASPRiD' <mail@dasprids.de>"]
+description = "JSON-API specific deserilization framework"
+license = "BSD-2-Clause"
+repository = "https://github.com/dasprid/jsonapi-deserialize-rs"
+
+[dependencies]
+serde_json = "1.0.132"
+serde = { version = "1.0.214", features = ["derive"] }
+langtag = { version = "0.4.0", features = ["serde"] }
+url = { version = "2.5.2", features = ["serde"] }
+thiserror = "1.0.65"
+http = "1.1.0"
+jsonapi_deserialize_derive = { version = "0", path = "../jsonapi_deserialize_derive" }
