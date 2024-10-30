@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.0.1...v1.0.2) (2024-10-30)
+
+
+### Bug Fixes
+
+* add missing symlinks ([e4c226a](https://github.com/DASPRiD/jsonapi-deserialize-rs/commit/e4c226af643448d71356e5afdaab64d8b4099e11))
+
 ## [1.0.1](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.0.0...v1.0.1) (2024-10-30)
 
 
