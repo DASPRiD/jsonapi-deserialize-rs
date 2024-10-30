@@ -1,5 +1,5 @@
 use darling::{ast, FromDeriveInput, FromField, FromMeta};
-use heck::ToSnakeCase;
+use heck::{ToLowerCamelCase, ToPascalCase, ToSnakeCase};
 use proc_macro::TokenStream;
 use proc_macro2::Ident;
 use quote::quote;
@@ -11,6 +11,21 @@ pub fn json_api_deserialize(input: TokenStream) -> TokenStream {
     impl_json_api_deserialize(&input).into()
 }
 
+#[derive(Debug, FromMeta)]
+#[darling(default)]
+#[allow(clippy::enum_variant_names)]
+enum RenameAll {
+    CamelCase,
+    PascalCase,
+    SnakeCase,
+}
+
+impl Default for RenameAll {
+    fn default() -> Self {
+        Self::CamelCase
+    }
+}
+
 #[derive(Debug, FromDeriveInput)]
 #[darling(attributes(json_api), supports(struct_any))]
 struct InputReceiver {
@@ -19,6 +34,8 @@ struct InputReceiver {
     generics: Generics,
     data: ast::Data<(), FieldReceiver>,
     resource_type: Option<String>,
+    #[darling(default)]
+    rename_all: RenameAll,
 }
 
 #[derive(Debug, FromMeta)]
@@ -36,6 +53,7 @@ struct FieldReceiver {
     ty: Type,
     relationship: Option<Relationship>,
     resource: Option<Type>,
+    rename: Option<String>,
 }
 
 fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
@@ -54,6 +72,15 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
             None => return,
         };
 
+        let json_field_name = match field.rename {
+            Some(rename) => rename,
+            None => match input_receiver.rename_all {
+                RenameAll::CamelCase => field_name.to_string().to_lower_camel_case(),
+                RenameAll::PascalCase => field_name.to_string().to_pascal_case(),
+                RenameAll::SnakeCase => field_name.to_string().to_snake_case(),
+            },
+        };
+
         let field_tokens = match field.relationship {
             Some(Relationship::Single) => {
                 let mut field_tokens = quote! {
@@ -61,7 +88,7 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
                         data
                             .get("relationships")
                             .ok_or_else(|| Error::MissingRelationships)?
-                            .get(stringify!(#field_name))
+                            .get(#json_field_name)
                             .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
                             .clone(),
                     )?.data;
@@ -81,7 +108,7 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
                         data
                             .get("relationships")
                             .ok_or_else(|| Error::MissingRelationships)?
-                            .get(stringify!(#field_name))
+                            .get(#json_field_name)
                             .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
                             .clone(),
                     )?.data;
@@ -104,7 +131,7 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
                         data
                             .get("relationships")
                             .ok_or_else(|| Error::MissingRelationships)?
-                            .get(stringify!(#field_name))
+                            .get(#json_field_name)
                             .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
                             .clone(),
                     )?.data;
@@ -137,7 +164,7 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
                             data
                                 .get("attributes")
                                 .ok_or_else(|| Error::MissingAttributes)?
-                                .get(stringify!(#field_name))
+                                .get(#json_field_name)
                                 .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
                                 .clone(),
                         )?;

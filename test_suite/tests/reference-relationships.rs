@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use jsonapi_deserialize::{deserialize_document, Document, JsonApiDeserialize, Reference};
 
 #[derive(Debug, JsonApiDeserialize, Eq, PartialEq)]
@@ -18,31 +20,31 @@ struct Article {
 fn test_deserialize() {
     let document: Document<Article> = deserialize_document(
         r#"{
-        "data": {
-            "id": "a-1",
-            "type": "article",
-            "attributes": {
-                "title": "Foo"
-            },
-            "relationships": {
-                "author": {
-                    "data": { "type": "person", "id": "p-1" }
+            "data": {
+                "id": "a-1",
+                "type": "article",
+                "attributes": {
+                    "title": "Foo"
                 },
-                "reviewer": {
-                    "data": { "type": "person", "id": "p-2" }
-                },
-                "publisher": {
-                    "data": null
-                },
-                "comments": {
-                    "data": [
-                        { "type": "comment", "id": "c-1" },
-                        { "type": "comment", "id": "c-2" }
-                    ]
+                "relationships": {
+                    "author": {
+                        "data": { "type": "person", "id": "p-1" }
+                    },
+                    "reviewer": {
+                        "data": { "type": "person", "id": "p-2" }
+                    },
+                    "publisher": {
+                        "data": null
+                    },
+                    "comments": {
+                        "data": [
+                            { "type": "comment", "id": "c-1" },
+                            { "type": "comment", "id": "c-2" }
+                        ]
+                    }
                 }
             }
-        }
-    }"#,
+        }"#,
     )
     .unwrap();
 

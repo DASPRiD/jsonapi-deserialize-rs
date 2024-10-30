@@ -29,6 +29,14 @@ this, you can annotate the struct the following way:
 struct Bar;
 ```
 
+### Field renaming
+
+Without further configuration, the library follows the JSON-API recommendation that all fields in JSON should be
+camel-cased. You can change this behavior with the `rename_all` attribute, similar to Serde. You can choose between
+`camel_case`, `pascal_case` and `snake_case`.
+
+Additionally you can also rename individual fields with the `rename` attribute. 
+
 ### Relationships
 
 Unless specified otherwise, a field is always an attribute. To specify a field as a relationship, set the relationship

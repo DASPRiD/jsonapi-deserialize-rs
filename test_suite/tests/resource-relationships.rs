@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use jsonapi_deserialize::{deserialize_document, Document, JsonApiDeserialize};
 use std::sync::Arc;
 
@@ -30,51 +32,51 @@ struct Comment {
 fn test_deserialize() {
     let document: Document<Article> = deserialize_document(
         r#"{
-        "data": {
-            "id": "123",
-            "type": "article",
-            "attributes": {
-                "title": "Foo"
-            },
-            "relationships": {
-                "author": {
-                    "data": { "type": "author", "id": "p-1" }
-                },
-                "reviewer": {
-                    "data": { "type": "author", "id": "p-1" }
-                },
-                "publisher": {
-                    "data": null
-                },
-                "comments": {
-                    "data": [
-                        { "type": "comment", "id": "c-1" }
-                    ]
-                }
-            }
-        },
-        "included": [
-            {
-                "type": "author",
-                "id": "p-1",
+            "data": {
+                "id": "123",
+                "type": "article",
                 "attributes": {
-                    "name": "John Smith"
-                }
-            },
-            {
-                "type": "comment",
-                "id": "c-1",
-                "attributes": {
-                    "content": "Lorem Ipsum"
+                    "title": "Foo"
                 },
                 "relationships": {
                     "author": {
                         "data": { "type": "author", "id": "p-1" }
+                    },
+                    "reviewer": {
+                        "data": { "type": "author", "id": "p-1" }
+                    },
+                    "publisher": {
+                        "data": null
+                    },
+                    "comments": {
+                        "data": [
+                            { "type": "comment", "id": "c-1" }
+                        ]
                     }
                 }
-            }
-        ]
-    }"#,
+            },
+            "included": [
+                {
+                    "type": "author",
+                    "id": "p-1",
+                    "attributes": {
+                        "name": "John Smith"
+                    }
+                },
+                {
+                    "type": "comment",
+                    "id": "c-1",
+                    "attributes": {
+                        "content": "Lorem Ipsum"
+                    },
+                    "relationships": {
+                        "author": {
+                            "data": { "type": "author", "id": "p-1" }
+                        }
+                    }
+                }
+            ]
+        }"#,
     )
     .unwrap();
 
