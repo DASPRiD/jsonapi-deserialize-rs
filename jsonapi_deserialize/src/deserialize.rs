@@ -11,6 +11,9 @@ pub enum Error {
     #[error("Missing ID")]
     MissingId,
 
+    #[error("Missing resource type")]
+    MissingResourceType,
+
     #[error("Missing attributes")]
     MissingAttributes,
 
@@ -22,6 +25,9 @@ pub enum Error {
 
     #[error("Missing resource")]
     MissingResource { kind: String, id: String },
+
+    #[error("Resource type mismatch")]
+    ResourceTypeMismatch { expected: String, found: String },
 
     #[error(transparent)]
     SerdeError(#[from] serde_json::Error),

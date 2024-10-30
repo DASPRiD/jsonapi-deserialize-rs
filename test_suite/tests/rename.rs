@@ -54,7 +54,7 @@ fn test_pascal_case() {
         r#"{
             "data": {
                 "id": "1",
-                "type": "snake_case",
+                "type": "pascal_case",
                 "attributes": {
                     "FooBar": "Foo"
                 }
@@ -72,7 +72,7 @@ fn test_camel_case() {
         r#"{
             "data": {
                 "id": "1",
-                "type": "snake_case",
+                "type": "camel_case",
                 "attributes": {
                     "fooBar": "Foo"
                 }
@@ -90,7 +90,7 @@ fn test_field_rename() {
         r#"{
             "data": {
                 "id": "1",
-                "type": "snake_case",
+                "type": "field_rename",
                 "attributes": {
                     "foobar": "Foo"
                 }

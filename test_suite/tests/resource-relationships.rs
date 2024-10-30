@@ -40,10 +40,10 @@ fn test_deserialize() {
                 },
                 "relationships": {
                     "author": {
-                        "data": { "type": "author", "id": "p-1" }
+                        "data": { "type": "person", "id": "p-1" }
                     },
                     "reviewer": {
-                        "data": { "type": "author", "id": "p-1" }
+                        "data": { "type": "person", "id": "p-1" }
                     },
                     "publisher": {
                         "data": null
@@ -57,7 +57,7 @@ fn test_deserialize() {
             },
             "included": [
                 {
-                    "type": "author",
+                    "type": "person",
                     "id": "p-1",
                     "attributes": {
                         "name": "John Smith"
@@ -71,7 +71,7 @@ fn test_deserialize() {
                     },
                     "relationships": {
                         "author": {
-                            "data": { "type": "author", "id": "p-1" }
+                            "data": { "type": "person", "id": "p-1" }
                         }
                     }
                 }

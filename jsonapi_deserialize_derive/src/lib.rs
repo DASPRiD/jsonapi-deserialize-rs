@@ -59,7 +59,7 @@ struct FieldReceiver {
 fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
     let input_receiver = InputReceiver::from_derive_input(input).unwrap();
     let struct_name = input_receiver.ident;
-    let _resource_type = input_receiver
+    let resource_type = input_receiver
         .resource_type
         .unwrap_or_else(|| struct_name.to_string().to_snake_case());
 
@@ -183,6 +183,20 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
                 use jsonapi_deserialize::Error;
 
                 let data = value.as_object().ok_or_else(|| Error::InvalidType("Expected an object"))?;
+
+                let resource_type: String = serde_json::from_value(
+                    data
+                        .get("type")
+                        .ok_or_else(|| Error::MissingResourceType)?
+                        .clone(),
+                )?;
+
+                if resource_type != #resource_type {
+                    return Err(Error::ResourceTypeMismatch {
+                        expected: #resource_type.to_string(),
+                        found: resource_type,
+                    });
+                }
 
                 #field_initializers
 
