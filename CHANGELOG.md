@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.0.0...v1.0.1) (2024-10-30)
+
+
+### Bug Fixes
+
+* symlink README and LICENSE files for crates.io ([9169201](https://github.com/DASPRiD/jsonapi-deserialize-rs/commit/9169201a6b8ffb95682d26bb2b1aa1e57e37866f))
+
 # 1.0.0 (2024-10-30)
 
 
