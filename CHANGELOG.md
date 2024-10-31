@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.1.1...v1.2.0) (2024-10-31)
+
+
+### Features
+
+* add handling for error objects contained in the document ([054746e](https://github.com/DASPRiD/jsonapi-deserialize-rs/commit/054746ec9dfa7011622144c0c50215be7ac0e7bc))
+
 ## [1.1.1](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.1.0...v1.1.1) (2024-10-31)
 
 
