@@ -4,6 +4,7 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::collections::HashMap;
 
+#[derive(Debug)]
 pub struct Document<T>
 where
     T: JsonApiDeserialize,
@@ -11,6 +12,32 @@ where
     pub data: T,
     pub meta: Option<HashMap<String, Value>>,
     pub links: Option<DocumentLinks>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DocumentError {
+    pub id: Option<String>,
+    pub links: Option<ErrorLinks>,
+    pub status: Option<String>,
+    pub code: Option<String>,
+    pub title: Option<String>,
+    pub detail: Option<String>,
+    pub source: Option<ErrorSource>,
+    pub meta: Option<HashMap<String, Value>>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ErrorLinks {
+    pub about: Option<Link>,
+    #[serde(rename = "type")]
+    pub kind: Option<Link>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ErrorSource {
+    pub pointer: Option<String>,
+    pub parameter: Option<String>,
+    pub header: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -36,7 +63,8 @@ pub struct Reference {
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct RawDocument {
-    pub data: Value,
+    pub data: Option<Value>,
+    pub errors: Option<Vec<DocumentError>>,
     pub meta: Option<HashMap<String, Value>>,
     pub links: Option<DocumentLinks>,
     pub included: Option<Vec<RawResource>>,

@@ -62,6 +62,17 @@ Resources which are included in the document must be typed as one of the followi
 
 The reason for the `Arc` is because the same resource can be shared across multiple relationships.
 
+## Error handling
+
+There are two possible failure cases when calling `deserialize_json_api_document()` which can result in an error:
+
+- `Error::DeserializeError(DeserializeError)`: There was a syntactic error while parsing the document
+- `Error::DocumentError(Vec<DocumentError>)`: The document contains errors instead of data
+
+The first kind of error either means that your structs do not match what's returned or that the server generated
+garbage. The second kind means that either there was a server error or that your request had errors. You can
+distinguish this based on whether the HTTP response code was in the 4xx or 5xx range.
+
 ## Examples
 
 Have a look at the tests in the [test_suite](./test_suite/tests) folder. Those are examples covering all current

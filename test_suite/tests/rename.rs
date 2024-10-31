@@ -5,21 +5,21 @@ use jsonapi_deserialize::{deserialize_document, Document, JsonApiDeserialize};
 #[derive(Debug, JsonApiDeserialize)]
 #[json_api(rename_all = "snake_case")]
 struct SnakeCase {
-    pub id: String,
+    id: String,
     foo_bar: String,
 }
 
 #[derive(Debug, JsonApiDeserialize)]
 #[json_api(rename_all = "pascal_case")]
 struct PascalCase {
-    pub id: String,
+    id: String,
     foo_bar: String,
 }
 
 #[derive(Debug, JsonApiDeserialize)]
 #[json_api(rename_all = "camel_case")]
 struct CamelCase {
-    pub id: String,
+    id: String,
     foo_bar: String,
 }
 

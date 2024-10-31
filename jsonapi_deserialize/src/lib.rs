@@ -1,13 +1,15 @@
 mod deserialize;
 mod document;
+mod error;
 mod included;
 mod link;
 
-pub use deserialize::{deserialize_document, Error, JsonApiDeserialize};
+pub use deserialize::{deserialize_document, Error as DeserializeError, JsonApiDeserialize};
 pub use document::{
-    Document, DocumentLinks, RawMultipleRelationship, RawOptionalRelationship,
-    RawSingleRelationship, Reference,
+    Document, DocumentError, DocumentLinks, ErrorLinks, ErrorSource, RawMultipleRelationship,
+    RawOptionalRelationship, RawSingleRelationship, Reference,
 };
+pub use error::Error;
 pub use included::IncludedMap;
 pub use link::Link;
 

@@ -4,7 +4,7 @@ use jsonapi_deserialize::{deserialize_document, Document, JsonApiDeserialize, Re
 
 #[derive(Debug, JsonApiDeserialize, Eq, PartialEq)]
 struct Article {
-    pub id: String,
+    id: String,
     title: String,
     #[json_api(relationship = "single")]
     author: Reference,

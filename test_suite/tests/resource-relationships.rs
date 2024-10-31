@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 #[derive(Debug, JsonApiDeserialize)]
 struct Article {
+    id: String,
     title: String,
     #[json_api(relationship = "single", resource = "Person")]
     author: Arc<Person>,

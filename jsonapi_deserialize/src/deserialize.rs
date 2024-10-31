@@ -8,6 +8,9 @@ pub enum Error {
     #[error("Invalid type")]
     InvalidType(&'static str),
 
+    #[error("Document contains neither data nor error")]
+    IncompleteDocument,
+
     #[error("Missing ID")]
     MissingId,
 
@@ -64,14 +67,23 @@ where
     }
 }
 
-pub fn deserialize_document<T: JsonApiDeserialize>(json: &str) -> Result<Document<T>, Error> {
-    let raw_document: RawDocument = serde_json::from_str(json)?;
+pub fn deserialize_document<T: JsonApiDeserialize>(
+    json: &str,
+) -> Result<Document<T>, crate::error::Error> {
+    let raw_document: RawDocument = serde_json::from_str(json).map_err(Error::SerdeError)?;
     let mut included_map: IncludedMap = match raw_document.included {
         Some(ref resources) => resources.into(),
         None => Default::default(),
     };
 
-    let data = T::from_value(&raw_document.data, &mut included_map)?;
+    if let Some(errors) = raw_document.errors {
+        return Err(crate::error::Error::DocumentError(errors));
+    }
+
+    let data = T::from_value(
+        &raw_document.data.ok_or_else(|| Error::IncompleteDocument)?,
+        &mut included_map,
+    )?;
 
     Ok(Document {
         data,

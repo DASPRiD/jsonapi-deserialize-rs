@@ -179,8 +179,11 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
 
     quote! {
         impl jsonapi_deserialize::JsonApiDeserialize for #struct_name {
-            fn from_value(value: &serde_json::Value, included_map: &mut jsonapi_deserialize::IncludedMap) -> Result<Self, jsonapi_deserialize::Error> {
-                use jsonapi_deserialize::Error;
+            fn from_value(
+                value: &serde_json::Value,
+                included_map: &mut jsonapi_deserialize::IncludedMap,
+            ) -> Result<Self, jsonapi_deserialize::DeserializeError> {
+                use jsonapi_deserialize::DeserializeError as Error;
 
                 let data = value.as_object().ok_or_else(|| Error::InvalidType("Expected an object"))?;
 
