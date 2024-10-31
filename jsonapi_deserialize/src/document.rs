@@ -17,14 +17,14 @@ where
 #[allow(dead_code)]
 pub struct DocumentLinks {
     #[serde(rename = "self")]
-    this: Option<Link>,
-    related: Option<Link>,
+    pub this: Option<Link>,
+    pub related: Option<Link>,
     #[serde(rename = "describedby")]
-    described_by: Option<Link>,
-    first: Option<Link>,
-    last: Option<Link>,
-    prev: Option<Link>,
-    next: Option<Link>,
+    pub described_by: Option<Link>,
+    pub first: Option<Link>,
+    pub last: Option<Link>,
+    pub prev: Option<Link>,
+    pub next: Option<Link>,
 }
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Clone)]
