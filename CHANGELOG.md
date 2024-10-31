@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.1.0...v1.1.1) (2024-10-31)
+
+
+### Bug Fixes
+
+* **document:** make DocumentLinks fields public ([e43ebb6](https://github.com/DASPRiD/jsonapi-deserialize-rs/commit/e43ebb6b45d136bd1973a92bed33ec59f40e17e3))
+
 # [1.1.0](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.0.2...v1.1.0) (2024-10-30)
 
 
