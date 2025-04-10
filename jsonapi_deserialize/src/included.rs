@@ -13,7 +13,7 @@ pub struct IncludedMap<'a> {
     deserialized_map: HashMap<(&'a str, &'a str, TypeId), Arc<dyn Any + Send + Sync>>,
 }
 
-impl<'a> IncludedMap<'a> {
+impl IncludedMap<'_> {
     pub fn get<T>(&mut self, kind: &str, id: &str) -> Result<Arc<T>, Error>
     where
         T: JsonApiDeserialize + Send + Sync + 'static,

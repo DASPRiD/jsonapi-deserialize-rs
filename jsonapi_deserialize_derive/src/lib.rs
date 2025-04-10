@@ -2,7 +2,7 @@ use darling::{ast, FromDeriveInput, FromField, FromMeta};
 use heck::{ToLowerCamelCase, ToPascalCase, ToSnakeCase};
 use proc_macro::TokenStream;
 use proc_macro2::Ident;
-use quote::quote;
+use quote::{format_ident, quote};
 use syn::{parse_macro_input, DeriveInput, Generics, Type};
 
 #[proc_macro_derive(JsonApiDeserialize, attributes(json_api))]
@@ -54,6 +54,115 @@ struct FieldReceiver {
     relationship: Option<Relationship>,
     resource: Option<Type>,
     rename: Option<String>,
+    #[darling(default)]
+    default: bool,
+    #[darling(default)]
+    optional: bool,
+}
+
+fn get_attribute_tokens(
+    field_name: &Ident,
+    json_field_name: &str,
+    default: bool,
+    optional: bool,
+) -> proc_macro2::TokenStream {
+    if !(default || optional) {
+        return quote! {
+            let #field_name = serde_json::from_value(
+                data
+                    .get("attributes")
+                    .ok_or(Error::MissingAttributes)?
+                    .get(#json_field_name)
+                    .ok_or(Error::MissingField(stringify!(#field_name)))?
+                    .clone(),
+            )?;
+        };
+    }
+
+    let mut tokens = quote! {
+        let #field_name = data
+            .get("attributes")
+            .and_then(|attrs| attrs.get(#json_field_name))
+            .cloned();
+    };
+
+    if default {
+        tokens.extend(quote! {
+            let #field_name = match #field_name {
+                Some(value) => serde_json::from_value(value)?,
+                None => Default::default(),
+            };
+        });
+    } else {
+        tokens.extend(quote! {
+            let #field_name = match #field_name {
+                Some(value) => Some(serde_json::from_value(value)?),
+                None => None,
+            };
+        });
+    }
+
+    tokens
+}
+
+fn get_relationship_tokens(
+    field_name: &Ident,
+    json_field_name: &str,
+    relationship_type: &str,
+    default: bool,
+    optional: bool,
+    lookup_tokens: Option<proc_macro2::TokenStream>,
+) -> proc_macro2::TokenStream {
+    let ty = format_ident!("{}", relationship_type);
+    let ty = quote! { jsonapi_deserialize::#ty };
+
+    if !(default || optional) {
+        return quote! {
+            let #field_name = serde_json::from_value::<#ty>(
+                data
+                    .get("relationships")
+                    .ok_or(Error::MissingRelationships)?
+                    .get(#json_field_name)
+                    .ok_or(Error::MissingField(stringify!(#field_name)))?
+                    .clone(),
+            )?.data;
+
+            #lookup_tokens
+        };
+    }
+
+    let mut tokens = quote! {
+        let #field_name = data
+            .get("relationships")
+            .and_then(|attrs| attrs.get(#json_field_name))
+            .cloned();
+    };
+
+    if default {
+        tokens.extend(quote! {
+            let #field_name = match #field_name {
+                Some(value) => {
+                    let #field_name = serde_json::from_value::<#ty>(value)?.data;
+                    #lookup_tokens
+                    #field_name.into()
+                },
+                None => Default::default(),
+            };
+        });
+    } else {
+        tokens.extend(quote! {
+            let #field_name = match #field_name {
+                Some(value) => {
+                    let #field_name = serde_json::from_value::<#ty>(value)?.data;
+                    #lookup_tokens
+                    Some(#field_name)
+                },
+                None => None,
+            };
+        });
+    }
+
+    tokens
 }
 
 fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
@@ -81,72 +190,51 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
             },
         };
 
+        let default = field.default;
+        let optional = field.optional;
+
         let field_tokens = match field.relationship {
             Some(Relationship::Single) => {
-                let mut field_tokens = quote! {
-                    let #field_name = serde_json::from_value::<jsonapi_deserialize::RawSingleRelationship>(
-                        data
-                            .get("relationships")
-                            .ok_or_else(|| Error::MissingRelationships)?
-                            .get(#json_field_name)
-                            .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
-                            .clone(),
-                    )?.data;
-                };
-
-                if let Some(resource) = field.resource {
-                    field_tokens.extend(quote! {
+                get_relationship_tokens(
+                    &field_name,
+                    &json_field_name,
+                    "RawSingleRelationship",
+                    default,
+                    optional,
+                    field.resource.map(|resource| quote! {
                         let #field_name = included_map.get::<#resource>(&#field_name.kind, &#field_name.id)?;
-                    });
-                }
-
-                field_tokens
+                    }),
+                )
             }
             Some(Relationship::Optional) => {
-                let mut field_tokens = quote! {
-                    let #field_name = serde_json::from_value::<jsonapi_deserialize::RawOptionalRelationship>(
-                        data
-                            .get("relationships")
-                            .ok_or_else(|| Error::MissingRelationships)?
-                            .get(#json_field_name)
-                            .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
-                            .clone(),
-                    )?.data;
-                };
-
-                if let Some(resource) = field.resource {
-                    field_tokens.extend(quote! {
+                get_relationship_tokens(
+                    &field_name,
+                    &json_field_name,
+                    "RawOptionalRelationship",
+                    default,
+                    optional,
+                    field.resource.map(|resource| quote! {
                         let #field_name = match #field_name {
                             Some(data) => Some(included_map.get::<#resource>(&data.kind, &data.id)?),
                             None => None,
                         };
-                    });
-                }
-
-                field_tokens
+                    }),
+                )
             }
             Some(Relationship::Multiple) => {
-                let mut field_tokens = quote! {
-                    let #field_name = serde_json::from_value::<jsonapi_deserialize::RawMultipleRelationship>(
-                        data
-                            .get("relationships")
-                            .ok_or_else(|| Error::MissingRelationships)?
-                            .get(#json_field_name)
-                            .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
-                            .clone(),
-                    )?.data;
-                };
-
-                if let Some(resource) = field.resource {
-                    field_tokens.extend(quote! {
+                get_relationship_tokens(
+                    &field_name,
+                    &json_field_name,
+                    "RawMultipleRelationship",
+                    default,
+                    optional,
+                    field.resource.map(|resource| quote! {
                         let #field_name = #field_name
                             .into_iter()
                             .map(|data| included_map.get::<#resource>(&data.kind, &data.id))
                             .collect::<Result<_, _>>()?;
-                    });
-                }
-
-                field_tokens
+                    }),
+                )
             }
             None => {
                 if field_name == "id" {
@@ -159,16 +247,7 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
                         )?;
                     }
                 } else {
-                    quote! {
-                        let #field_name = serde_json::from_value(
-                            data
-                                .get("attributes")
-                                .ok_or_else(|| Error::MissingAttributes)?
-                                .get(#json_field_name)
-                                .ok_or_else(|| Error::MissingField(stringify!(#field_name)))?
-                                .clone(),
-                        )?;
-                    }
+                    get_attribute_tokens(&field_name, &json_field_name, default, optional)
                 }
             }
         };
@@ -185,7 +264,7 @@ fn impl_json_api_deserialize(input: &DeriveInput) -> proc_macro2::TokenStream {
             ) -> Result<Self, jsonapi_deserialize::DeserializeError> {
                 use jsonapi_deserialize::DeserializeError as Error;
 
-                let data = value.as_object().ok_or_else(|| Error::InvalidType("Expected an object"))?;
+                let data = value.as_object().ok_or(Error::InvalidType("Expected an object"))?;
 
                 let resource_type: String = serde_json::from_value(
                     data

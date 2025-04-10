@@ -60,7 +60,7 @@ where
     fn from_value(value: &Value, included: &mut IncludedMap) -> Result<Self, Error> {
         value
             .as_array()
-            .ok_or_else(|| Error::InvalidType("Expected an array"))?
+            .ok_or(Error::InvalidType("Expected an array"))?
             .iter()
             .map(|value| T::from_value(value, included))
             .collect()
@@ -81,7 +81,7 @@ pub fn deserialize_document<T: JsonApiDeserialize>(
     }
 
     let data = T::from_value(
-        &raw_document.data.ok_or_else(|| Error::IncompleteDocument)?,
+        &raw_document.data.ok_or(Error::IncompleteDocument)?,
         &mut included_map,
     )?;
 

@@ -37,7 +37,7 @@ Without further configuration, the library follows the JSON-API recommendation t
 camel-cased. You can change this behavior with the `rename_all` attribute, similar to Serde. You can choose between
 `camel_case`, `pascal_case` and `snake_case`.
 
-Additionally you can also rename individual fields with the `rename` attribute. 
+Additionally, you can also rename individual fields with the `rename` attribute. 
 
 ### Relationships
 
@@ -61,6 +61,16 @@ Resources which are included in the document must be typed as one of the followi
 - `Vec<Arc<T>>`
 
 The reason for the `Arc` is because the same resource can be shared across multiple relationships.
+
+### Optional and default fields
+
+Sometimes an API may omit certain fields, both attributes and references. You essentially have two ways to handle this:
+
+1. Use `#[json_api(default)]`. This will use the default value of your property. If the field is already nullable,
+   as in, it is an `Option<T>`, you will not be able to distinguish `null` from `undefined`. To cover this scenario,
+   you should consider the second option.
+2. Use `#[json_api(optional)]`. This requires that you wrap your type in `Option`. For non-nullable fields, this would
+   simply be `Option<T>`, while for nullable fields, this would be `Option<Option<T>`.
 
 ## Error handling
 
