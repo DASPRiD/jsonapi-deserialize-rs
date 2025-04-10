@@ -94,7 +94,6 @@ fn test_optional_missing_relationships() {
     )
     .unwrap();
 
-    assert_eq!(document.data.default_string.as_str(), "");
-    assert_eq!(document.data.optional, None);
-    assert_eq!(document.data.optional_nullable, None);
+    assert_eq!(document.data.default_ref, None);
+    assert_eq!(document.data.optional_ref, None);
 }
