@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.2.0...v1.3.0) (2025-04-10)
+
+
+### Features
+
+* add `#[json_api(default)]` and `#[json_api(optional)]` ([87ef6d9](https://github.com/DASPRiD/jsonapi-deserialize-rs/commit/87ef6d9fe92810b47ebe3ce91f8e8c193878bd62)), closes [#1](https://github.com/DASPRiD/jsonapi-deserialize-rs/issues/1)
+
 # [1.2.0](https://github.com/DASPRiD/jsonapi-deserialize-rs/compare/v1.1.1...v1.2.0) (2024-10-31)
 
 
